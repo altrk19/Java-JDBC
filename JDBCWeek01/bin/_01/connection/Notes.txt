@@ -1,0 +1,160 @@
+JDBC
+JDBC iliþkisel veritabanlarýna eriþim için Java dilinde kullanýlan standart bir kütüphanedir.
+Bu kütüphanedeki sýnýflarý kullanarak, ayný söz dizilimi ile farklý veritabanlarýnda iþlem yapabilirsiniz.
+
+Veritabaný ile ilgili sýnýflar java.sql.* paketinde
+bulunmaktadýr.
+
+JDBC ile veritabanýnda iþlem yapabilmek için þu adýmlar
+izlenmelidir:
+
+
+1- JDBC Sürücüsünü(Driver) Yüklemek
+Sürücü(driver) veritabaný ile nasýl iletiþim yapacaðýný bilen sýnýflardýr.
+Java sýnýflarý veritabaný iþlemlerinde arka planda sürücü içerisindeki sýnýflarý kullanýrlar.
+Sürücüyü kullanabilmek için uygun sýnýflarý belleðe yüklememiz yeterlidir.
+Sürücü sýnýfý kendi örneðini oluþturur ve JDBC'nin sürücü
+yönetici(DriverManager) sýnýfýna kayýt eder.
+
+Örnek sürücü yükleme kodu.
+try{
+Class.forName(“com.mysql.jdbc.Driver”);
+Class.forName(“oracle.jdbc.driver.OracleDriver”);
+...
+}catch(ClassNotFoundException e){
+e.printStackTrace();
+}
+Sürücü sýnýfý CLASSPATH deðiþkeni ile ulaþýlabilmelidir.
+Web uygulamalarýnda sürücü sunucunun kütüphaneleri
+içerisinde ya da WEB-INF/lib klasöründe olmalýdýr
+
+
+2- Baðlantý Stringi oluþturmak
+Baðlanmak istediðimiz veri tabaný sunucusuna özel baðlantý String leri oluþturmamýz gereklidir.
+Bu String ler veritabanýna baðlantýda kullanýlýr.
+
+Örnek:
+String
+baglantiURL=”jdbc:mysql://127.0.0.1/test?user=root&password=a”;
+
+
+
+
+3- Baðlantý Oluþturma 
+
+Örnek:
+Connection baglanti = DriverManager.getConnection(baglantiURL);
+Herhangi bir problemde SQLException fýrlatýlýr.
+Bu Exception deðerlendirilmelidir.
+
+
+
+4- Ýfade Oluþturma
+Veritabanýna yapacaðý iþleri söylemek için kullanýlan(sql
+veya komut) sýnýftýr.
+Örnek:
+Statement ifade = baglanti.createStatement();
+
+
+
+5- Bir sorgu ya da güncelleme
+icra etme
+Sorgunun çalýþtýrýlmasý
+Örnek:
+String sorgu = “Select * from tablo1”;
+ResultSet sonucKumesi = ifade.executeQuery(sorgu);
+
+
+
+
+5- Bir sorgu ya da güncelleme
+icra etme
+
+*executeQuery(): sorgu çalýþtýrýr ve geriye ResultSet
+çevirir, bu küme boþ olabilir fakat null olmaz.
+*executeUpdate(): UPDATE,INSERT,DELETE sorgularý
+için kullanýlýr. Geriye etkilenen satýr sayýsý çevrilir. Ayrýca
+CREATE TABLE, DROP TABLE, ALTER TABLE gibi DDL
+sorgularýný da icra eder.
+
+*setQueryTimeOut(): Sürücünün SQLException
+oluþturmadan önce ne kadar süre bekleyeceðini belirtir.
+
+*setMaxRows(): Sonuç kümesinin maksimum kaç satýr
+olacaðýný belirtir. Fazlasý kesilir.
+
+
+6- Sonuç Verilerini Ýþlemek
+Sonuç ResultSet nesnesinin satýrlarýndan oluþur.
+Her satýrda bulunan sütunlar 1 numaralý indisten baþlar.
+Sonuç kümesinden belirli bir sütun bilgisini almak için
+getXXX (sütun no ya da sütun adý) metotlarý kullanýlýr.
+getString(1) , getInteger(2) vb.
+Tüm sonuç kümesini dolaþmak için;
+while(sonucKumesi.next()){
+System.out.println(sonucKumesi.getString(1));
+}
+
+
+
+6- Sonuç Verilerini Ýþlemek
+*next/previous : sonraki ve önceki kayýta gider.
+*relative/absolute: belirli bir satýra gider.
+*getXXX(): sütun deðerini verir.
+*findColumn(sütun adý): sütunun indis numarasýný verir.
+*getRow(): mevcut satýr numarasýný verir.
+*getMetaData: ResultSetMetaData nesnesi geriye çevirir.
+Bu nesne sonuç kümesi hakkýnda bilgi içerir.
+
+
+
+7- Baðlantýyý Kapatmak
+baglanti.close();
+Bu baðlantý ile ilgili olan
+diðer nesnelerde (ResultSet,Statement) kapatýlýr.
+Baðlantý açýlmasý ve kapatýlmasý sistem yük getirdiði için
+genellikle uygulama baþýnda açýlýr ve uygulama
+sonlandýrýldýðýnda kapatýlýr. 
+
+
+
+
+Hazýrlanmýþ Ýfadelerin Kullanýlmasý(Prepared Statement)
+Ayný SQL ifadesini çok kez çalýþtýracaksanýz, bu sorguyu
+parametreli ifade haline getirerek kullanmanýz
+uygulamanýn etkinliðini arttýracaktýr.
+Hazýrlanmýþ sorgular veritabaný sunucusunda derlenip
+saklandýklarý için daha performanslý çalýþýrlar.
+String sorgu=”UPDATE tablo1 SET soyad=? where id=?”;
+PreparedStatement ifade = baglanti.prepareStatement(sorgu);
+ifade.setString(1,”BBB”);
+ifade.setInt(2,3);
+ifade.executeUpdate();
+
+
+
+CallableStatement nesnedi ile veri tabanýnda bulunan bir
+stored procedure/function çalýþtýrýlabilir. Stored procedure
+ve stored function veritabanýnda saklanýlan özel yazým þekli
+olan prosedür ve fonksiyonlardýr. Normal SQL sorgularýna
+göre daha hýzlý çalýþýrlar. Performans ve güvenlik için
+kullanýlýrlar.
+
+Tipleri:
+{call prosedür_adý} //parametresiz
+{call prosedür_adý(?,?,...)} //parametreli
+{?=call prosedür_adý} //parametresiz, geri dönüþlü
+{?=call prosedür_adý(?,?,...)} //parametreli, geri dönüþlü
+Üst Düzey Programlama-ders07/ 20
+
+
+Çaðrýlabilir Ýfadeler(Callable Statements)-
+Stored Procedures
+Genel kullaným þekli:
+String prosedur=”{?=call prosedur_adi(?,?)}”;
+CallableStatement ifade = baglanti.prepareCall(prosedur);
+ifade.setString(2,”ad”);
+ifade.setFloat(3,120.0);
+ifade.execute();
+Geri Dönüþ Deðerini almak için örneðin;
+int deger = ifade.getInt(1);
