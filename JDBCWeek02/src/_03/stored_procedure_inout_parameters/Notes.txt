@@ -1,0 +1,4 @@
+PROCEDURE 'greet_the_department'(INOUT department VARCHAR(64))
+BEGIN
+SET department =concat('Hello to the awesome',department,'team');
+END

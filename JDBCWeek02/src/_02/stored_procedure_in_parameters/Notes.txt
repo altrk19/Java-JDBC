@@ -1,0 +1,10 @@
+IN parametresiyle ilgili örnek:
+
+Aþaðýdaki kod veri tabanýnda yazýlmalýdýr.
+
+PROCEDURE 'increase_salaries_for_department'(IN the_department VARDHAR(64), IN increase_amount DECIMAL(10,2))
+BEGIN
+UPDATE employees SET salary=salary + increase_amount WHERE department=the_department;
+END
+
+Java'da yazýlacak kod IncreaseSalariesForDepartmen class'ýnda verilmiþtir.

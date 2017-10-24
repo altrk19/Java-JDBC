@@ -1,0 +1,4 @@
+PROCEDURE 'get_count_for_departmen'(IN the_department VARCHAR(64), OUT the_count INT)
+BEGIN
+SELECT COUNT(*) INTO the_count FROM employees WHERE department =the_department;
+END

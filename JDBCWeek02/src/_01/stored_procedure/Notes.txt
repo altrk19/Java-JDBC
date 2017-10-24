@@ -1,0 +1,14 @@
+Stored procedure'ler metotlar gibi çalýþýrlar.Procedure'lere parametreleri gönderiyoruz,procedure'in içerisinde yapacaðý iþlemleri tamamlýyoruz.
+Procedure'ler dýþarýdan aldýgý degerlerle iþlemler yaparlar.
+
+Store procedure normalde bir DBA tarafýndan oluþturulurlar.
+
+JDBC'de Stored procedure'leri çaðýrmak için Callable Statements kullanýlýr.Stored procedure'leri çaðýrmak için özel bir syntax vardýr.
+String içinde kývýrcýk parantez kullanýlýr.
+
+The JDBC API supports different parameters:
+   -IN
+   -INOUT
+   -OUT
+
+Ýlk önce IN parametresiyle baþlayalým.
